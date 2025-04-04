@@ -1,0 +1,26 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Étape 1 : Checkout du code depuis GitHub
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Étape 2 : Déployer sur GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          user_name: 'GitHub Actions'  # Le nom d'utilisateur
+          user_email: 'actions@github.com'  # L'email associé à ce commit
