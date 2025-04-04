@@ -1,0 +1,33 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master  # Déclenche l'action lorsqu'il y a un push sur la branche `master`
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Exécute sur une machine virtuelle Ubuntu
+
+    steps:
+      # 1. Checkout du code source
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # 2. Installe Node.js (si tu veux installer et utiliser un gestionnaire de paquets)
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'  # Utilise la version de Node.js que tu préfères
+
+
+      # 3. Déploiement sur GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages  # La branche qui sera utilisée pour le déploiement sur GitHub Pages
+          folder: ./dist    # Le répertoire contenant les fichiers à déployer (par exemple, ./dist ou ./build, selon ton projet)
+          
+        # Configuration de GitHub Pages
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Utilisation du token GitHub pour autoriser les commits
