@@ -57,3 +57,20 @@ jobs:
         with:
           branch: gh-pages
           folder: .
+
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Étape pour créer et pousser un tag Git
+      - name: Create and push Git tag
+        if: github.ref == 'refs/heads/master'  # S'exécute uniquement sur la branche `master`
+        run: |
+          TAG="v1.0.0" 
+          echo "Création du tag $TAG"
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git tag $TAG
+          git push origin $TAG
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Utilisation du token GitHub pour autoriser les push
