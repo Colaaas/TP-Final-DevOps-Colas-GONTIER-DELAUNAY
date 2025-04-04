@@ -1,0 +1,23 @@
+{
+    "name": "tp-final-devops-colas-gontier-delaunay",
+    "version": "1.0.0",
+    "description": "Ce TP a pour but de vous permettre de mettre en pratique l'ensemble des connaissances acquises durant les TDs sur Git, Docker et l'intégration continue (CI/CD).",
+    "main": "index.js",
+    "scripts": {},
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@eslint/js": "^9.23.0",
+        "eslint": "^8.57.1",
+        "globals": "^16.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Colaaas/TP-Final-DevOps-Colas-GONTIER-DELAUNAY.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Colaaas/TP-Final-DevOps-Colas-GONTIER-DELAUNAY/issues"
+    },
+    "homepage": "https://github.com/Colaaas/TP-Final-DevOps-Colas-GONTIER-DELAUNAY#readme"
+}

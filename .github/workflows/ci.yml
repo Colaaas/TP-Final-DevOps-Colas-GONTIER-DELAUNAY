@@ -3,24 +3,57 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
-  deploy:
+  build:
+    name: Vérification des fichiers essentiels
     runs-on: ubuntu-latest
     steps:
-      # Étape 1 : Checkout du code depuis GitHub
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout du code
+        uses: actions/checkout@v4
 
-      # Étape 2 : Déployer sur GitHub Pages
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Vérifier que index.html, style.css et script.js existent
+        run: |
+          test -f index.html || (echo "Erreur: index.html manquant" && exit 1)
+          test -f style.css || (echo "Erreur: style.css manquant" && exit 1)
+          test -f script.js || (echo "Erreur: script.js manquant" && exit 1)
+
+  lint:
+    name: Vérification du code (HTML + JS)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
-          user_name: 'GitHub Actions'  # Le nom d'utilisateur
-          user_email: 'actions@github.com'  # L'email associé à ce commit
+          node-version: 18
+
+      - name: Installer HTMLHint et ESLint
+        run: |
+          npm install -g htmlhint eslint
+
+      - name: Vérifier HTML avec HTMLHint
+        run: htmlhint index.html || true
+
+      - name: Vérifier JavaScript avec ESLint
+        run: eslint script.js --fix || true
+
+  deploy:
+    name: Déploiement sur GitHub Pages
+    needs: [build, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Déploiement sur GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: .
