@@ -26,7 +26,7 @@ const paddle = {
     x: canvas.width / 2 - 50,
     y: canvas.height - 20,
     color: "white",
-    speed: speed1, // Vitesse de la raquette
+    speed: speed1 + 1, // Vitesse de la raquette
     dx: 0 // Vitesse horizontale de la raquette
 };
 
@@ -131,7 +131,7 @@ function update() {
     ball.x += ball.speedX;
     ball.y += ball.speedY;
 
-    paddle.speed = speed1;
+    paddle.speed = speed1 + 1;
 
     paddle.x += paddle.dx;
 
