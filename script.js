@@ -68,6 +68,13 @@ document.addEventListener("keydown", movePaddle);
 document.addEventListener("keyup", stopPaddle);
 document.addEventListener("keydown", handleKeyPress);
 
+// Empêcher les flèches droite et gauche de modifier le slider
+document.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+        e.preventDefault();
+    }
+});
+
 function startgame() {
     startButton.style.display = "none";
     startState = false;
@@ -99,7 +106,18 @@ function handleKeyPress(e) {
 
 function drawRect(x, y, w, h, color) {
     ctx.fillStyle = color;
-    ctx.fillRect(x, y, w, h);
+    ctx.beginPath();
+
+    // Dessiner un rectangle avec des coins arrondis uniquement en haut
+    ctx.moveTo(x + 10, y); // Coin supérieur gauche arrondi
+    ctx.arcTo(x, y, x, y + 10, 10);
+    ctx.lineTo(x, y + h); // Ligne droite jusqu'au bas gauche
+    ctx.lineTo(x + w, y + h); // Ligne droite jusqu'au bas droit
+    ctx.lineTo(x + w, y + 10); // Ligne droite jusqu'au coin supérieur droit
+    ctx.arcTo(x + w, y, x + w - 10, y, 10); // Coin supérieur droit arrondi
+    ctx.closePath();
+
+    ctx.fill();
 }
 
 function drawCircle(x, y, r, color) {
@@ -128,6 +146,14 @@ function spawnApples() {
 }
 
 function update() {
+    // Mettre à jour la vitesse de la balle en fonction du slider
+    let ballSpeed = parseInt(speedSlider.value);
+
+    // Normaliser la vitesse de la balle tout en conservant sa direction
+    let currentSpeed = Math.sqrt(ball.speedX ** 2 + ball.speedY ** 2);
+    ball.speedX = (ball.speedX / currentSpeed) * ballSpeed;
+    ball.speedY = (ball.speedY / currentSpeed) * ballSpeed;
+
     ball.x += ball.speedX;
     ball.y += ball.speedY;
 
@@ -152,22 +178,19 @@ function update() {
         ball.x > paddle.x - paddleHitbox.offsetX &&
         ball.x < paddle.x + paddle.width + paddleHitbox.offsetX
     ) {
-        // Calcul de la position de collision sur la raquette
         let relativeIntersectX = ball.x - (paddle.x + paddle.width / 2);
         let normalizedRelativeIntersectionX = relativeIntersectX / (paddle.width / 2);
-        let angle = normalizedRelativeIntersectionX * (Math.PI / 4); // L'angle change en fonction de la collision sur la raquette
+        let angle = normalizedRelativeIntersectionX * (Math.PI / 4);
 
-        // Modifie la direction de la balle en fonction de l'angle
-        ball.speedX = (speed1*1.5) * Math.sin(angle);  // Augmente la vitesse horizontale en fonction de l'angle
-        ball.speedY = -Math.abs((speed1*1.5) * Math.cos(angle)); // La balle se dirige vers le haut avec une vitesse ajustée
+        ball.speedX = (speed1 * 1.5) * Math.sin(angle);
+        ball.speedY = -Math.abs((speed1 * 1.5) * Math.cos(angle));
     }
 
     if (ball.y + ball.radius > canvas.height) {
         gameOver = true;
-        replayButton.style.display = "block"; // Afficher le bouton de redémarrage
+        replayButton.style.display = "block";
     }
 
-    // Collision avec la pomme
     apples.forEach(apple => {
         const dist = Math.sqrt((ball.x - apple.x) ** 2 + (ball.y - apple.y) ** 2);
         if (dist < ball.radius + apple.radius) {
@@ -177,14 +200,13 @@ function update() {
                 score++;
             }
 
-            // Temporarily hide the apple and respawn it after 1 second
             const appleToRespawn = apple;
-            appleToRespawn.x = -100; // Move it off-screen temporarily
+            appleToRespawn.x = -100;
             appleToRespawn.y = -100;
 
             setTimeout(() => {
                 spawnApple(apple);
-            }, 1000); // 1 second delay
+            }, 1000);
         }
     });
 }
