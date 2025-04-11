@@ -16,10 +16,10 @@ jobs:
       - name: Checkout du code
         uses: actions/checkout@v4
 
-      - name: Vérifier que index.html, style.css et script.js existent
+      - name: Vérifier que index.html, styles.css et script.js existent
         run: |
           test -f index.html || (echo "Erreur: index.html manquant" && exit 1)
-          test -f style.css || (echo "Erreur: style.css manquant" && exit 1)
+          test -f styles.css || (echo "Erreur: styles.css manquant" && exit 1)
           test -f script.js || (echo "Erreur: script.js manquant" && exit 1)
 
   lint:
@@ -52,25 +52,28 @@ jobs:
       - name: Checkout du code
         uses: actions/checkout@v4
 
-      - name: Déploiement sur GitHub Pages
+      - name: Déployer uniquement les fichiers statiques
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: .
+          folder: .  # OU "public" si tu préfères créer un dossier propre
+          clean: true  # nettoie les anciens fichiers de la branche gh-pages
 
   build-and-test:
+    name: Créer un tag Git
     runs-on: ubuntu-latest
-
     steps:
-      # Étape pour créer et pousser un tag Git
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Create and push Git tag
-        if: github.ref == 'refs/heads/master'  # S'exécute uniquement sur la branche `master`
+        if: github.ref == 'refs/heads/master'
         run: |
-          TAG="v1.0.0" 
+          TAG="v1.0.0"
           echo "Création du tag $TAG"
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git tag $TAG
           git push origin $TAG
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Utilisation du token GitHub pour autoriser les push
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
