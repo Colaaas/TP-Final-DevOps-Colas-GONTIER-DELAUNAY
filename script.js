@@ -26,7 +26,7 @@ const paddle = {
     x: canvas.width / 2 - 50,
     y: canvas.height - 20,
     color: "white",
-    speed: speed1 + 1, // Vitesse de la raquette
+    speed: speed1 + 0.5, // Vitesse de la raquette
     dx: 0 // Vitesse horizontale de la raquette
 };
 
@@ -108,13 +108,12 @@ function drawRect(x, y, w, h, color) {
     ctx.fillStyle = color;
     ctx.beginPath();
 
-    // Dessiner un rectangle avec des coins arrondis uniquement en haut
-    ctx.moveTo(x + 10, y); // Coin supérieur gauche arrondi
+    ctx.moveTo(x + 10, y);
     ctx.arcTo(x, y, x, y + 10, 10);
-    ctx.lineTo(x, y + h); // Ligne droite jusqu'au bas gauche
-    ctx.lineTo(x + w, y + h); // Ligne droite jusqu'au bas droit
-    ctx.lineTo(x + w, y + 10); // Ligne droite jusqu'au coin supérieur droit
-    ctx.arcTo(x + w, y, x + w - 10, y, 10); // Coin supérieur droit arrondi
+    ctx.lineTo(x, y + h);
+    ctx.lineTo(x + w, y + h);
+    ctx.lineTo(x + w, y + 10);
+    ctx.arcTo(x + w, y, x + w - 10, y, 10);
     ctx.closePath();
 
     ctx.fill();
@@ -146,7 +145,6 @@ function spawnApples() {
 }
 
 function update() {
-    // Mettre à jour la vitesse de la balle en fonction du slider
     let ballSpeed = parseInt(speedSlider.value);
 
     // Normaliser la vitesse de la balle tout en conservant sa direction
@@ -194,10 +192,13 @@ function update() {
     apples.forEach(apple => {
         const dist = Math.sqrt((ball.x - apple.x) ** 2 + (ball.y - apple.y) ** 2);
         if (dist < ball.radius + apple.radius) {
+            // Calcul du score en fonction de la vitesse du slider
+            const baseScore = 5 + Math.round((speedSlider.value - 1) / 0.7);
+
             if (apple.color === "yellow") {
-                score += 3;
+                score += baseScore * 5; // La pomme jaune rapporte 5 fois plus
             } else {
-                score++;
+                score += baseScore; // Pomme normale
             }
 
             const appleToRespawn = apple;
@@ -224,9 +225,9 @@ function draw() {
     // Afficher le score
     ctx.font = "24px Arial";
     ctx.fillStyle = "white";
-    ctx.textAlign = "left"; // Align text to the left
-    ctx.textBaseline = "top"; // Align text to the top
-    ctx.fillText("Score: " + score, 10, 10); // Add padding (e.g., 10px from the top-left corner)
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText("Score: " + score, 10, 10);
 
     // Afficher "You Lose" si le jeu est terminé
     if (gameOver) {
@@ -246,13 +247,13 @@ function gameLoop() {
 }
 
 function restartGame() {
-    speed1 = parseInt(speedSlider.value); // Mettre à jour la vitesse
+    speed1 = parseInt(speedSlider.value);
     score = 0;
     resetBall();
     spawnApples();
     gameOver = false;
-    replayButton.style.display = "none"; // Cacher le bouton de redémarrage
-    gameLoop(); // Lancer la boucle de jeu
+    replayButton.style.display = "none";
+    gameLoop();
 }
 
 
