@@ -82,15 +82,19 @@ function startgame() {
 }
 
 function movePaddle(e) {
-    if (e.key === "ArrowRight") {
+    if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
         paddle.dx = paddle.speed;
-    } else if (e.key === "ArrowLeft") {
+    } else if (e.key === "ArrowLeft" || e.key === "q" || e.key === "Q") {
         paddle.dx = -paddle.speed;
     }
 }
 
 function stopPaddle(e) {
-    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+    if (
+        e.key === "ArrowRight" || e.key === "ArrowLeft" ||
+        e.key === "q" || e.key === "Q" ||
+        e.key === "d" || e.key === "D"
+    ) {
         paddle.dx = 0;
     }
 }
